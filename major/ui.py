@@ -467,8 +467,190 @@ class Ui_MainWindow(object):
         '''
         adding all the text to labels, checkbuttons
         '''
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Group Activity Scheduler"))
+        self.morning.setToolTip(_translate("MainWindow", "Select the available morning activities"))
+        self.morning.setStatusTip(_translate("MainWindow", "Select the available morning activities"))
+        self.morning.setTitle(_translate("MainWindow", "Morning Activities"))
+        self.m1.setText(_translate("MainWindow", "Soccer"))
+        self.m2.setText(_translate("MainWindow", "Basketball"))
+        self.m3.setText(_translate("MainWindow", "Hockey"))
+        self.m4.setText(_translate("MainWindow", "Tennis"))
+        self.m5.setText(_translate("MainWindow", "Volleyball"))
+        self.m6.setText(_translate("MainWindow", "Ultimate"))
+        self.m7.setText(_translate("MainWindow", "Squash"))
+        self.m8.setText(_translate("MainWindow", "Lacrosse"))
+        self.m9.setText(_translate("MainWindow", "Football"))
+        self.m10.setText(_translate("MainWindow", "Softball"))
+        self.mOther.setText(_translate("MainWindow", "CheckBox"))
+        self.afternoon.setToolTip(_translate("MainWindow", "Select the available afternoon activities"))
+        self.afternoon.setStatusTip(_translate("MainWindow", "Select the available afternoon activities"))
+        self.afternoon.setTitle(_translate("MainWindow", "Afternoon Activities"))
+        self.a1.setText(_translate("MainWindow", "Soccer"))
+        self.a2.setText(_translate("MainWindow", "Basketball"))
+        self.a3.setText(_translate("MainWindow", "Hockey"))
+        self.a4.setText(_translate("MainWindow", "Tennis"))
+        self.a5.setText(_translate("MainWindow", "Volleyball"))
+        self.a6.setText(_translate("MainWindow", "Ultimate"))
+        self.a7.setText(_translate("MainWindow", "Squash"))
+        self.a8.setText(_translate("MainWindow", "Lacrosse"))
+        self.a9.setText(_translate("MainWindow", "Football"))
+        self.a10.setText(_translate("MainWindow", "Softball"))
+        self.aOther.setText(_translate("MainWindow", "CheckBox"))
 
+        self.set.setText(_translate("MainWindow", "Best"))
+
+        self.g2.setTitle(_translate("MainWindow", "Group 2"))
+        self.label_2.setText(_translate("MainWindow", "Lunch"))
+        self.label_3.setText(_translate("MainWindow", "Swim"))
+        self.groups.setTitle(_translate("MainWindow", "Number of Groups"))
+        self.label.setText(_translate("MainWindow", "Enter Number of Groups"))
+        self.done.setText(_translate("MainWindow", "Generate Schedule"))
+        self.g3.setTitle(_translate("MainWindow", "Group 3"))
+        self.label_6.setText(_translate("MainWindow", "Lunch"))
+        self.label_7.setText(_translate("MainWindow", "Swim"))
+        self.g4.setTitle(_translate("MainWindow", "Group 4"))
+        self.label_8.setText(_translate("MainWindow", "Lunch"))
+        self.label_9.setText(_translate("MainWindow", "Swim"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Group 5"))
+        self.label_10.setText(_translate("MainWindow", "Lunch"))
+        self.label_11.setText(_translate("MainWindow", "Swim"))
+        self.g6.setTitle(_translate("MainWindow", "Group 6"))
+        self.label_14.setText(_translate("MainWindow", "Lunch"))
+        self.label_15.setText(_translate("MainWindow", "Swim"))
+        self.g8.setTitle(_translate("MainWindow", "Group 8"))
+        self.label_26.setText(_translate("MainWindow", "Lunch"))
+        self.label_27.setText(_translate("MainWindow", "Swim"))
+        self.g4_2.setTitle(_translate("MainWindow", "Group 9"))
+        self.label_28.setText(_translate("MainWindow", "Lunch"))
+        self.label_29.setText(_translate("MainWindow", "Swim"))
+        self.groupBox_3.setTitle(_translate("MainWindow", "Group 10"))
+        self.label_30.setText(_translate("MainWindow", "Lunch"))
+        self.label_31.setText(_translate("MainWindow", "Swim"))
+        self.g7.setTitle(_translate("MainWindow", "Group 7"))
+        self.label_32.setText(_translate("MainWindow", "Lunch"))
+        self.label_33.setText(_translate("MainWindow", "Swim"))
+        self.groupBox_set.setTitle(_translate("MainWindow", "Constraints"))
+
+        self.best = True
+
+        def check_valid_lunch_swim(self, n):
+            '''
+            This check to make sure no group has same lunch and swim
+            n: number of groups
+            '''
+            for i in range(n-1):
+                if (self.comboBoxLunches[i].currentText() == self.comboBoxSwim[i].currentText()):
+                    return False
+            return True
         
+        def pressed(self):
+            '''
+            Drives the generate button, it checks if everything in GUI is valid then runs the algo
+            '''
+            try:
+                self.groups = int(self.num_groups.text())
+
+                if not(2 < self.groups <= 10):
+                    self.error_msg_box("The number if groups must be between 2 to 10")
+                elif not(self.check_valid_lunch_swim(self.groups)):
+                    self.error_msg_box("No groups can have the same swim and lunch period.", "Conflicting Values")
+                else:
+                    self.check_best()
+                    self.matrix = self.generate_matrix(self.groups)
+                    self.start_time = time.time()
+                    self.solve()
+                    self.display_matrix()
+
+                    make_word_doc(self.matrix, self.week.currentText())
+
+                    if time.time() - self.start_time > 5:
+                        self.error_msg_box("Unable to generate a schedule that fits the constraints.", "Schedule NOT Created")
+                    else:
+                        self.info_msg_box("The schedule has been generated", "Schedule Created")
+
+            except Exception as e:
+                print(e)
+                self.error_msg_box("Please enter a valid number of groups.", "Incomplete Form")
+
+        def check_best(self):
+            '''
+            Check if the best checkbutton is clicked and set the attribute appropriatly.
+            '''
+            self.best = self.set.isChecked()
+
+        def error_msg_box(self, text, title):
+            '''
+            display error msg
+            '''
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.critical)
+            msg.setWindowTitle(title)
+            msg.setText(text)
+            x = msg.exec_()
+
+        def info_msg_box(self, text, title):
+            '''
+            disp info in msg box
+            '''
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.information)
+            msg.setWindowTitle(title)
+            msg.setText(text)
+            x = msg.exec_()
+
+        def get_morning_events(self):
+            '''
+            get events occuring in morning
+            '''
+            events = []
+            for check in self.morningCheckBoxes:
+                if check.isChecked() and check.text() != "ChecBox":
+                    events.append(check.text())
+
+            if self.morningCheckBoxes[-1].isChecked():
+                if self.m_lineEdit.text() != "":
+                    events.append(self.m_lineEdit.text())
+
+            return events
+        
+        def get_afternoon_events(self):
+            '''
+            get events in afternoon
+            '''
+            events = []
+            for check in self.afternoonCheckBoxes:
+                if check.isChecked() and check.text() != "":
+                    events.append(check.text())
+
+            if self.afternoonCheckBoxes[-1].isChecked():
+                if self.a_lineEdit.text() != "":
+                    events.append(self.a_lineEdit.text())
+
+            return events
+        
+        def generate_matrix(self, n):
+            '''
+            generating 3d matrix
+            '''
+            pass
+
+
+
+
+
+
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
 
 
 
