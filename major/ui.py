@@ -6,7 +6,7 @@ The code below is written entierly in python using the PyQt5 Module.
 The majority of the UI for this project has been generated using 
 the software: QtDesigner.
 '''
-import automate-install-reqs
+import automate_install_reqs
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 import pprint
@@ -30,6 +30,8 @@ class Ui_MainWindow(object):
         MainWindow.resize(640, 632)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName('centralwidget')
+
+        self.morning = QtWidgets.QGroupBox(self.centralwidget)
         self.morning.setGeometry(QtCore.QRect(0, 320, 201, 281))
         font = QtGui.QFont()
         font.setPointSize(14)
@@ -323,7 +325,7 @@ class Ui_MainWindow(object):
 
 
         for x in range(1, 8):
-            self.weel.addItem("Week " + str(x))
+            self.week.addItem("Week " + str(x))
 
         self.week.setCurrentIndex(0)
 
@@ -459,11 +461,12 @@ class Ui_MainWindow(object):
         '''link pressed method to generate button'''
         self.done.clicked.connect(self.pressed)
 
-        self.retranslateUi(self, MainWindow)
+        self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
 
-    def retranslateUi(self.MainWindow):
+    def retranslateUi(self, MainWindow):
+
         '''
         adding all the text to labels, checkbuttons
         '''
@@ -534,113 +537,242 @@ class Ui_MainWindow(object):
 
         self.best = True
 
-        def check_valid_lunch_swim(self, n):
-            '''
-            This check to make sure no group has same lunch and swim
-            n: number of groups
-            '''
-            for i in range(n-1):
-                if (self.comboBoxLunches[i].currentText() == self.comboBoxSwim[i].currentText()):
-                    return False
-            return True
+    def check_valid_lunch_swim(self, n):
+        '''
+        This check to make sure no group has same lunch and swim
+        n: number of groups
+        '''
+        for i in range(n-1):
+            if (self.comboBoxLunches[i].currentText() == self.comboBoxSwim[i].currentText()):
+                return False
+        return True
         
-        def pressed(self):
-            '''
-            Drives the generate button, it checks if everything in GUI is valid then runs the algo
-            '''
-            try:
-                self.groups = int(self.num_groups.text())
+    def pressed(self):
+        '''
+        Drives the generate button, it checks if everything in GUI is valid then runs the algo
+        '''
+        try:
+            self.groups = int(self.num_groups.text())
 
-                if not(2 < self.groups <= 10):
-                    self.error_msg_box("The number if groups must be between 2 to 10")
-                elif not(self.check_valid_lunch_swim(self.groups)):
-                    self.error_msg_box("No groups can have the same swim and lunch period.", "Conflicting Values")
+            if not(2 < self.groups <= 10):
+                self.error_msg_box("The number if groups must be between 2 to 10")
+            elif not(self.check_valid_lunch_swim(self.groups)):
+                self.error_msg_box("No groups can have the same swim and lunch period.", "Conflicting Values")
+            else:
+                self.check_best()
+                self.matrix = self.generate_matrix(self.groups)
+                self.start_time = time.time()
+                self.solve()
+                self.display_matrix()
+
+                make_word_doc(self.matrix, self.week.currentText())
+
+                if time.time() - self.start_time > 5:
+                    self.error_msg_box("Unable to generate a schedule that fits the constraints.", "Schedule NOT Created")
                 else:
-                    self.check_best()
-                    self.matrix = self.generate_matrix(self.groups)
-                    self.start_time = time.time()
-                    self.solve()
-                    self.display_matrix()
+                    self.info_msg_box("The schedule has been generated", "Schedule Created")
 
-                    make_word_doc(self.matrix, self.week.currentText())
+        except Exception as e:
+            print(e)
+            self.error_msg_box("Please enter a valid number of groups.", "Incomplete Form")
 
-                    if time.time() - self.start_time > 5:
-                        self.error_msg_box("Unable to generate a schedule that fits the constraints.", "Schedule NOT Created")
+    def check_best(self):
+        '''
+        Check if the best checkbutton is clicked and set the attribute appropriatly.
+        '''
+        self.best = self.set.isChecked()
+
+    def error_msg_box(self, text, title):
+        '''
+        display error msg
+        '''
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        x = msg.exec_()
+
+    def info_msg_box(self, text, title):
+        '''
+        disp info in msg box
+        '''
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        x = msg.exec_()
+
+    def get_morning_events(self):
+        '''
+        get events occuring in morning
+        '''
+        events = []
+        for check in self.morningCheckBoxes:
+            if check.isChecked() and check.text() != "ChecBox":
+                events.append(check.text())
+
+        if self.morningCheckBoxes[-1].isChecked():
+            if self.m_lineEdit.text() != "":
+                events.append(self.m_lineEdit.text())
+
+        return events
+    
+    def get_afternoon_events(self):
+        '''
+        get events in afternoon
+        '''
+        events = []
+        for check in self.afternoonCheckBoxes:
+            if check.isChecked() and check.text() != "":
+                events.append(check.text())
+
+        if self.afternoonCheckBoxes[-1].isChecked():
+            if self.a_lineEdit.text() != "":
+                events.append(self.a_lineEdit.text())
+
+        return events
+    
+    def generate_matrix(self, n):
+        '''
+        generating 3d matrix
+        '''
+        matrix = []
+
+        for group in range(0, n-1):
+            matrix.append([])
+            lunch = int(self.comboBoxLunches[group].currentText()[-1])
+            swim = int(self.comboBoxSwim[group].currentText()[-1])
+
+            for row in range(6):
+                matrix[group].append([])
+                for i in range(4):
+                    if i == 0 and row == 0:
+                        matrix[group][row].append("Name Games")
+                    elif row+1 == lunch:
+                        matrix[group][row].append("Lunch")
+                    elif row+1 == swim:
+                        matrix[group][row].append("Swim")
                     else:
-                        self.info_msg_box("The schedule has been generated", "Schedule Created")
+                        matrix[group][row].append("")
 
-            except Exception as e:
-                print(e)
-                self.error_msg_box("Please enter a valid number of groups.", "Incomplete Form")
+            return matrix
+            
+    def solve(self):
+        '''
+        Main implementation of the backtracking algorithm to solve
+        the constraint satisfaction problem of greating the schdules. This is a
+        recursice funciton.
+        '''
+        morning = self.get_morning_events()
+        afternoon = self.get_afternoon_events()
 
-        def check_best(self):
-            '''
-            Check if the best checkbutton is clicked and set the attribute appropriatly.
-            '''
-            self.best = self.set.isChecked()
+        random.shuffle(morning)
+        random.shuffle(afternoon)
 
-        def error_msg_box(self, text, title):
-            '''
-            display error msg
-            '''
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.critical)
-            msg.setWindowTitle(title)
-            msg.setText(text)
-            x = msg.exec_()
+        find = self.find_empty()
+        if not find or time.time() - self.start_time > 5:
+            return True
+        else:
+            group, row, col = find
 
-        def info_msg_box(self, text, title):
-            '''
-            disp info in msg box
-            '''
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.information)
-            msg.setWindowTitle(title)
-            msg.setText(text)
-            x = msg.exec_()
+            if row < 2:
+                events = morning[:]
 
-        def get_morning_events(self):
-            '''
-            get events occuring in morning
-            '''
-            events = []
-            for check in self.morningCheckBoxes:
-                if check.isChecked() and check.text() != "ChecBox":
-                    events.append(check.text())
+                used_already = self.matrix[group][0] + self.matrix[group][1]
 
-            if self.morningCheckBoxes[-1].isChecked():
-                if self.m_lineEdit.text() != "":
-                    events.append(self.m_lineEdit.text())
+                if group != 0:
+                    for el in used_already:
+                        try:
+                            events.remove(el)
+                        except:
+                            continue
+            else:
+                events = afternoon[:]
 
-            return events
+                if row == 2 or row == 3:
+                    for event in self.afternoonCheckBoxes:
+                        if not(event.isChecked()) and event.text() != "CheckBox":
+                            events.append(event.text())
+
+                used_already = self.matrix[group][2] + self.matrix[group][3] + self.matrix[group][4] + self.matrix[group][5]
+                            
+                if group != 0:
+                    for el in used_already:
+                        try:
+                            events.remove(el)
+                        except:
+                            continue
+            if group == 0:
+                try:
+                    events.remove("Tennis")
+                except:
+                    pass
+
+        '''
+        our backtracing algorithm
+        '''
+        for event in events:
+            if self.valid(event, (group, row, col)):
+                #add event if valid
+                self.matrix[group][row][col] = event
+
+                if self.solve():
+                    return True
+                
+        self.matrix[group][row][col] = ""
+
+        return False
+    def find_empty(self):
+        '''
+        will find the first empty square in the matrix/schedule
+        '''
+        for i, group in enumerate(self.matrix):
+            for j, row in enumerate(group):
+                for x, event in enumerate(row):
+                    if event == "":
+                        return (i, j, x)
+                    
+        return None
+    
+    def valid(self, event, pos):
+        g, row, col = pos
+
+        for group in range(len(self.matrix)):
+            if self.matrix[group][row][col] == event and group != g:
+                return False
+            
+        count = 0
+        for i, r in enumerate(self.matrix[g]):
+            count += r.count(event)
+
+        if count >= 3:
+            return False
         
-        def get_afternoon_events(self):
-            '''
-            get events in afternoon
-            '''
-            events = []
-            for check in self.afternoonCheckBoxes:
-                if check.isChecked() and check.text() != "":
-                    events.append(check.text())
-
-            if self.afternoonCheckBoxes[-1].isChecked():
-                if self.a_lineEdit.text() != "":
-                    events.append(self.a_lineEdit.text())
-
-            return events
-        
-        def generate_matrix(self, n):
-            '''
-            generating 3d matrix
-            '''
-            pass
-
-
-
-
-
-
-
+        for i in range(6):
+            if self.matrix[g][i][col] == event and i != row:
+                return False
+            
+        if self.best:
+            for i in range(6):
+                for j in range(4):
+                    if self.matrix[g][i][j] == event and abs(col - j) <= 1:
+                        return False
+                    
+        return True
+    
+    def display_matrix(self):
+        for g, group in enumerate(self.matrix):
+            print("---------------------")
+            print("GROUP", str(g+2) + ":")
+            print("---------------------")
+            formatted_days = " "*16 + "{day:<16}".format(day="MONDAY") + "{day:<16}".format(day="TUESDAY") + "{day:<16}".format(day="WEDNESDAY") + "{day:<16}".format(day="THURSDAY")
+            print(formatted_days)
+            for i, period in enumerate(group):
+                print("{text:<16}".format(text="PERIOD " + str(i+1) + ":"), end="")
+                show = ""
+                for event in period:
+                    show += "{day:<16}".format(day=event)
+                print(show)
 
 
 if __name__ == "__main__":
