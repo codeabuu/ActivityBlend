@@ -9,6 +9,7 @@ from docx.shared import Pt
 
 GAMES = ["name games","softball", "basketball", "squash", "ultimate", "hockey", "lacrosse", "football", "tennis", "volleyball", "soccer"]
 
+
 def create_tables(n, doc):
 	"""
 	will create all of the neccessary tables/schdules for
@@ -57,7 +58,6 @@ def fill_tables(matrix, doc):
 			if update:
 				r += 1
 
-
 def make_word_doc(matrix, file_name="Week 1"):
 	"""
 	creates the word document that contains the new schdule.
@@ -71,10 +71,10 @@ def make_word_doc(matrix, file_name="Week 1"):
 	font = style.font
 	font.name = 'Arial'
 	font.size = Pt(12)
+
 	groups = len(matrix)
 	create_tables(groups-1, doc)
 	doc.save("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
 	doc = docx.Document("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
 	fill_tables(matrix, doc)
 	doc.save("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
-
