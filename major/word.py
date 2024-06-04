@@ -1,13 +1,10 @@
 """
-Date Modified: Jul 15, 2019
-Author: Tech With Tim
-
 This script is responsible for writing a generated schedule
 into a word document. 
 """
 import docx
 from copy import deepcopy
-from docx.shared import Pt
+from docx.shared import Pt 
 
 
 GAMES = ["name games","softball", "basketball", "squash", "ultimate", "hockey", "lacrosse", "football", "tennis", "volleyball", "soccer"]
@@ -30,6 +27,7 @@ def create_tables(n, doc):
 		paragraph = doc.add_paragraph()
 		paragraph._p.addnext(new_tbl)
 		doc.add_page_break()
+
 
 def fill_tables(matrix, doc):
 	"""
@@ -69,18 +67,14 @@ def make_word_doc(matrix, file_name="Week 1"):
 	:return: None
 	"""
 	doc = docx.Document(r"C:\Users\Admin\Desktop\prp\ActivityBlend\major\2024 Template Schedules.docx")
-	
 	style = doc.styles['Normal']
 	font = style.font
 	font.name = 'Arial'
 	font.size = Pt(12)
-	
 	groups = len(matrix)
-	
 	create_tables(groups-1, doc)
-	doc.save(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
-	
-	doc = docx.Document(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
+	doc.save("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
+	doc = docx.Document("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
 	fill_tables(matrix, doc)
-	doc.save(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
-	#print(f"Generated schedule saved at {save_path}")
+	doc.save("C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules/" + file_name + " Schedules.docx")
+
