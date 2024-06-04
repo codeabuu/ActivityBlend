@@ -20,7 +20,7 @@ def create_tables(n, doc):
 	:return: None
 	"""
 	for x in range(n):
-		p = doc.add_paragraph("Group " + str(x+3))
+		p = doc.add_paragraph("Group " + str(x+2))
 		p.style = "group"
 		template = doc.tables[0]
 		tbl = template._tbl
