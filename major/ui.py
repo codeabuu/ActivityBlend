@@ -538,7 +538,7 @@ class Ui_MainWindow(object):
                 self.error_msg_box("No groups may have the same swim and lunch period.", "Conflicting Values")
             else:
                 self.check_best()
-                self.matrix = self.generate_matrix(self.groups)
+                self.matrix = self.generate_matrix(self.groups+1)
                 self.start_time = time.time()
                 self.solve()
                 self.display_matrix()
