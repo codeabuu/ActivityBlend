@@ -8,7 +8,6 @@ into a word document.
 import docx
 from copy import deepcopy
 from docx.shared import Pt
-import os
 
 
 GAMES = ["name games","softball", "basketball", "squash", "ultimate", "hockey", "lacrosse", "football", "tennis", "volleyball", "soccer"]
@@ -31,7 +30,6 @@ def create_tables(n, doc):
 		paragraph = doc.add_paragraph()
 		paragraph._p.addnext(new_tbl)
 		doc.add_page_break()
-
 
 def fill_tables(matrix, doc):
 	"""
@@ -80,12 +78,9 @@ def make_word_doc(matrix, file_name="Week 1"):
 	groups = len(matrix)
 	
 	create_tables(groups-1, doc)
-	save_path = f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx"
-
+	doc.save(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
 	
-	doc.save(save_path)
-	
-	doc = docx.Document(save_path)
+	doc = docx.Document(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
 	fill_tables(matrix, doc)
-	doc.save(save_path)
+	doc.save(f"C:\\Users\\Admin\\Desktop\\prp\\ActivityBlend\\major\\Generated Schedules\\{file_name} Schedules.docx")
 	#print(f"Generated schedule saved at {save_path}")
