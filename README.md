@@ -62,6 +62,21 @@ The simple user interface is designed using QTDesigner.
 
 ## Screenshot
 
+*UI*
+![Screenshot (317)](https://github.com/codeabuu/ActivityBlend/assets/125456974/b4a1306b-cba8-4c75-8bfb-e88411f31820)
+
+
+*Info/Error messageBox*
+![Screenshot (318)](https://github.com/codeabuu/ActivityBlend/assets/125456974/47801ac1-04e3-49c0-ab72-d186cafb73ea)
+
+
+*Path to our generated schedules*
+![WhatsApp Image 2024-06-05 at 18 21 28](https://github.com/codeabuu/ActivityBlend/assets/125456974/2feff87a-3a85-4406-aec4-0e78d16f8658)
+
+
+*Example of Generated Template from our default template(2024 Template Schedules)*
+https://github.com/codeabuu/ActivityBlend/tree/master/major/Generated%20Schedules
+
 
 ## Contribution
 
