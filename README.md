@@ -54,7 +54,7 @@ While the primary use case for this tool is summer camps, it can also be adapted
     *Click on the "Generate Schedule" button.
     *The generated schedule will be automatically saved in a Word document.
 
-*Note: If the document does successfully generate, ensure that you specify the path where you want your schedules to be saved, this includes the pre-existing 2024 Template table in 'word.py'.*
+*Note: If the document does not successfully generate, ensure that you specify the path where you want your schedules to be saved, this includes the pre-existing 2024 Template table in 'word.py'.*
 
 ## User Interface
 
