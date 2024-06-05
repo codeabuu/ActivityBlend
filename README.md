@@ -1,8 +1,8 @@
-#Summer Camp Timetable and Schedule Generator
+# Summer Camp Timetable and Schedule Generator
 
 ## Overview
 
-Welcome to the Summer Camp Timetable and Schedule Generator! This tool is designed to automatically create timetables and schedules for different groups in a summer camp setting. Using this tool, you can efficiently manage and organize activities, ensuring a balanced and diverse schedule for all groups.
+Welcome to the Summer Camp Timetable and Schedule Generator! This tool is designed to automatically create timetables and schedules for different groups in a summer camp setting, and saves them automatically in a word document. Using this tool, you can efficiently manage and organize activities, ensuring a balanced and diverse schedule for all groups.
 
 ## Features
 
@@ -23,20 +23,26 @@ Each group has a daily schedule divided into six periods:
 
 Note: Lunch and swim are fixed at the same period every day.
 
+## Apllication
+
+While the primary use case for this tool is summer camps, it can also be adapted for use in other settings such as:
+     
+     * Schools: For creating class schedules
+     * Organisations: For planning team activities or workshops.
+     * Sports Clubs: For scheduling training sessions and matches.
+
 ## Installation and Usage
 
 * Prerequisites
     * Python 3.x
     * PyQt5
-    * PyQt5 Designer
     * Python-docx
     * python-copy
-
-## Installation
 
 1.Clone the Repository.
 
 2.install the dependencies
+* pip install PyQt5
 
 ## Usage
 
@@ -53,6 +59,9 @@ Note: If the document does succesfully generate, ensure that you include specifi
 ## User Interface
 
 The simple user interface is designed using QTDesigner.
+
+## Screenshot
+
 
 ## Contribution
 
