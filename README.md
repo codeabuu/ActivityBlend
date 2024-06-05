@@ -23,13 +23,13 @@ Each group has a daily schedule divided into six periods:
 
 Note: Lunch and swim are fixed at the same period every day.
 
-## Apllication
+## Application
 
 While the primary use case for this tool is summer camps, it can also be adapted for use in other settings such as:
      
-     * Schools: For creating class schedules
-     * Organisations: For planning team activities or workshops.
-     * Sports Clubs: For scheduling training sessions and matches.
+* Schools: For creating class schedules
+* Organisations: For planning team activities or workshops.
+* Sports Clubs: For scheduling training sessions and matches.
 
 ## Installation and Usage
 
@@ -54,7 +54,7 @@ While the primary use case for this tool is summer camps, it can also be adapted
     *Click on the "Generate Schedule" button.
     *The generated schedule will be automatically saved in a Word document.
 
-# Note: If the document does successfully generate, ensure that you specify the path where you want your schedules to be saved and include your pre-existing 2024 Template table in word.py.
+Note: If the document does successfully generate, ensure that you specify the path where you want your schedules to be saved, this includes the pre-existing 2024 Template table in 'word.py'.
 
 ## User Interface
 
